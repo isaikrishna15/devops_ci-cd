@@ -18,13 +18,15 @@ pipeline {
         stage('Run App') {
             steps {
                 sh '''
-                echo "Stopping old app"
-                pm2 delete myapp || true
+                echo "Ensuring correct directory"
+                cd $WORKSPACE
 
-                echo "Starting app with PM2"
-                pm2 start app.js --name myapp
+                echo "Restarting app with PM2 (clean way)"
+                pm2 restart myapp || pm2 start app.js --name myapp
 
                 pm2 save
+
+                echo "Active processes:"
                 pm2 list
                 '''
             }
